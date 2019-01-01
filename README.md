@@ -29,6 +29,8 @@ main.py内の`output_dir`で指定したディレクトリ下に以下のフォ�
 - `text`: 記事本文のタグ付きテキスト
 - `info_box`: プロフィールやお店情報が記載された部分のタグ付きテキスト
 
+![](image/goodcolormeta.png)
+
 ## API
 
 ```python
