@@ -28,6 +28,7 @@ main.py内の`output_dir`で指定したディレクトリ下に以下のフォ�
 - `url`: 記事のURL
 - `text`: 記事本文のタグ付きテキスト
 - `info_box`: プロフィールやお店情報が記載された部分のタグ付きテキスト
+- `img_urls`: 各写真の画像URL
 
 ![](image/goodcolormeta.png)
 
