@@ -35,8 +35,8 @@ def download_images(article_dict):
 
     cmd = [
         "scrapy", "crawl", "good-color-download",
-        "-a", "url={}".format(article_dict["url"]),
-        "-a", "date={}".format(article_dict["date"]),
+        "-a", f"url={article_dict['url']}",
+        "-a", f"date={article_dict['date']}",
         "-t", "json",
         "-o", "-"
     ]

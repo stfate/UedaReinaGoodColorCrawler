@@ -19,10 +19,10 @@ class GoodColorCrawlSpider(scrapy.Spider):
     
     def start_requests(self):
         urls = [
-            "{}/column/color/".format(self.ROOT_URL),
-            "{}/column/color/p2/".format(self.ROOT_URL),
-            "{}/column/color/p3/".format(self.ROOT_URL),
-            "{}/column/color/p4/".format(self.ROOT_URL)
+            f"{self.ROOT_URL}/column/color/",
+            f"{self.ROOT_URL}/column/color/p2/",
+            f"{self.ROOT_URL}/column/color/p3/",
+            f"{self.ROOT_URL}/column/color/p4/"
         ]
 
         for url in urls:
@@ -46,7 +46,7 @@ class GoodColorCrawlSpider(scrapy.Spider):
 
             yield {
                 "title": title,
-                "url": "{}{}".format(self.ROOT_URL, page_url),
+                "url": f"{self.ROOT_URL}{page_url}",
                 "date": date
             }
 
