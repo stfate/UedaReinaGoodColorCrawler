@@ -2,7 +2,7 @@
 
 """
 @package good_color.py
-@brief 上田麗奈さん「この色、いいな」の画像クローラ
+@brief 上田麗奈さん「この色、いいな」(https://webnewtype.com/column/color/)のクローラ
 @author stfate
 """
 
@@ -10,6 +10,7 @@ import scrapy
 import requests
 import datetime
 import os
+import json
 import time
 
 
@@ -52,20 +53,47 @@ class GoodColorCrawlSpider(scrapy.Spider):
 
 class GoodColorDownloadSpider(scrapy.Spider):
     name = "good-color-download"
-    download_root = "../../data/downloads"
     
     def start_requests(self):
         self.url = getattr(self, "url", None)
         self.date = getattr(self, "date", None)
+        self.output_root = getattr(self, "out", None)
 
         yield scrapy.Request(url=self.url, callback=self.parse)
 
     def parse(self, response):
+        meta = {
+            "title": "",
+            "url": self.url,
+            "date": self.date,
+            "text": "",
+            "info_box": "",
+            "img_urls": []
+        }
+
+        # title
+        div_title = response.css("div.column_titleBox")
+        title = div_title.css("h1::text").extract_first()
+        meta["title"] = title
+
+        # main text
+        div_main_text = response.css("div.column_mainTextBox_second")
+        main_text = "".join(div_main_text.css("div *").extract())
+        meta["text"] = main_text
+
+        # additional text
+        div_add_text = response.css("div.column_additionalBox")
+        add_text = "".join(div_add_text.css("div *").extract())
+        meta["info_box"] = add_text
+
+        # images
         div_img_area = response.css("div.related_imgArea")
         li_list = div_img_area.css("li")
         for _li in li_list:
             img_src = _li.css("li a div.imgArea div.imgBox img::attr(src)").extract_first()
-            img_save_dir = os.path.join( self.download_root, self.date)
+            img_src = img_src.replace("/w98h98/", "")
+            meta["img_urls"].append(img_src)
+            img_save_dir = os.path.join( self.output_root, self.date, "images")
             if not os.path.exists(img_save_dir):
                 os.makedirs(img_save_dir)
             img_save_fn = os.path.join( img_save_dir, os.path.basename(img_src) )
@@ -83,4 +111,8 @@ class GoodColorDownloadSpider(scrapy.Spider):
             
             time.sleep(1.0)
 
-            yield {"url": img_src}
+        meta_save_dir = os.path.join(self.output_root, self.date)
+        meta_fn = os.path.join(meta_save_dir, "meta.json")
+        json.dump(meta, open(meta_fn, "w"), ensure_ascii=False, indent=2, sort_keys=True)
+
+        return meta
